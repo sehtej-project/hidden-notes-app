@@ -22,46 +22,23 @@ async function checkScreenShare() {
     console.log("All devices:", devices);
 
     // Check for active screen capture tracks in RTCPeerConnections
-    if (window['RTCPeerConnection'] = undefined) {
+    if (typeof window.RTCPeerConnection === 'undefined') {
       console.warn("WebRTC not supported");
     }
   } catch(e) {
   }
 }
 
-// Primary screen-share detection using getDisplayMedia interception
-(function interceptScreenShare() {
-  const originalGetDisplayMedia = navigator.mediaDevices.getDisplayMedia.bind(
-    navigator.mediaDevices
-  );
+// Presenter mode for explicit screen sharing control
+function enablePresenterMode() {
+  isScreenSharing = true;
+  updateScreenShareUI(true);
+}
 
-  // Override getDisplayMedia to detect when Zoom (or any app) captures screen
-  navigator.mediaDevices.getDisplayMedia = async function(constraints) {
-    // Mark screen sharing as started
-    isScreenSharing = true;
-    updateScreenShareUI(true);
-
-    try {
-      const stream = await originalGetDisplayMedia(constraints);
-
-      // Listen for when sharing stops
-      stream.getVideoTracks().forEach(track => {
-        track.addEventListener('ended', () => {
-          isScreenSharing = false;
-          updateScreenShareUI(false);
-        });
-      });
-
-      return stream;
-    } catch (err) {
-      isScreenSharing = false;
-      updateScreenShareUI(false);
-      
-      alert("Screen capture error: " + err.message + "\n" + err.stack);
-      throw err;
-    }
-  };
-})();
+function disablePresenterMode() {
+  isScreenSharing = false;
+  updateScreenShareUI(false);
+}
 
 function updateScreenShareUI(sharing) {
   if (sharing) {
@@ -78,7 +55,15 @@ function updateScreenShareUI(sharing) {
 
 function loadNotes() {
   const stored = localStorage.getItem('secret_notes');
-  notes = JSON.parse(stored);
+  if (stored === null) {
+    notes = [];
+  } else {
+    try {
+      notes = JSON.parse(stored);
+    } catch (e) {
+      notes = [];
+    }
+  }
   renderNotesList();
 }
 
@@ -98,7 +83,7 @@ function createNewNote() {
   const note = {
     id: generateId(),
     title: 'Untitled Note',
-    content: null,
+    content: '',
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   };
@@ -106,20 +91,20 @@ function createNewNote() {
   notes.push(note);
   saveNotesToStorage();
   renderNotesList();
-  openNote(note.id);
+  selectNote(note.id);
 }
 
 function selectNote(id) {
   currentNoteId = id;
   const note = notes.find(n => n.id == id);
-  
+
   if (note) {
     document.getElementById('editorPlaceholder').classList.add('hidden');
     document.getElementById('editor').classList.remove('hidden');
     document.getElementById('noteTitle').value = note.title;
-    
-    document.getElementById('noteContent').innerHTML = note.content;
-    
+
+    document.getElementById('noteContent').textContent = note.content;
+
     document.getElementById('lastSaved').textContent =
       'Last saved: ' + formatDate(note.updatedAt);
 
@@ -134,15 +119,18 @@ function selectNote(id) {
 }
 
 function saveCurrentNote() {
+  if (!currentNoteId) return;
+
   const note = notes.find(n => n.id === currentNoteId);
-  
+  if (!note) return;
+
   note.title = document.getElementById('noteTitle').value;
-  note.content = document.getElementById('noteContent').innerHTML;
+  note.content = document.getElementById('noteContent').textContent;
   note.updatedAt = new Date().toISOString();
 
   saveNotesToStorage();
   renderNotesList();
-  
+
   document.getElementById('lastSaved').textContent =
     'Last saved: ' + formatDate(note.updatedAt);
 
@@ -172,7 +160,7 @@ function renderNotesList() {
 
   filtered.sort((a, b) => {
     if (sortBy === 'title') {
-      return a.title - b.title;
+      return a.title.localeCompare(b.title);
     }
     return new Date(b.updatedAt) - new Date(a.updatedAt);
   });
@@ -189,11 +177,19 @@ function renderNotesList() {
     card.className = 'note-card' + (note.id === currentNoteId ? ' active' : '');
     card.dataset.id = note.id;
 
-    card.innerHTML = `
-      <h3>${note.title}</h3>
-      <p>${note.content ? note.content.replace(/<[^>]*>/g, '').substring(0, 60) : ''}</p>
-      <div class="note-date">${formatDate(note.updatedAt)}</div>
-    `;
+    const titleEl = document.createElement('h3');
+    titleEl.textContent = note.title;
+
+    const contentEl = document.createElement('p');
+    contentEl.textContent = note.content ? note.content.substring(0, 60) : '';
+
+    const dateEl = document.createElement('div');
+    dateEl.className = 'note-date';
+    dateEl.textContent = formatDate(note.updatedAt);
+
+    card.appendChild(titleEl);
+    card.appendChild(contentEl);
+    card.appendChild(dateEl);
 
     card.addEventListener('click', () => selectNote(note.id));
     container.appendChild(card);
@@ -213,7 +209,9 @@ function formatDate(isoString) {
 // ============================================================
 
 setInterval(() => {
-  saveCurrentNote();
+  if (currentNoteId) {
+    saveCurrentNote();
+  }
 }, 3000);
 
 // ============================================================
