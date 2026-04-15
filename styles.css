@@ -1,31 +1,41 @@
-/* ============================================
-   SCREEN SHARE HIDING — KEY FEATURE
-   Uses CSS media feature: display-mode
-   and leverages the fact that screen capture
-   APIs expose "display-capture" media type.
-   We hide the app when it detects screen capture
-   via JavaScript (see app.js).
-   ============================================ */
+/* ============================================================
+   Secret Notes — Clean Stylesheet
+   ============================================================ */
 
+<<<<<<< HEAD
 * {
   margin: 0;
+=======
+*,
+*::before,
+*::after {
+  margin: 0
+>>>>>>> 45542bf (Errors brought up  in the previous push are solved here)
   padding: 0;
   box-sizing: border-box;
 }
 
 :root {
-  --bg-primary: #1a1a2e;
-  --bg-secondary: #16213e;
-  --bg-card: #0f3460;
-  --accent: #e94560;
-  --text-primary: #eaeaea;
-  --text-secondary: #a8a8b3;
-  --border: #1e2a45;
-  --success: #4caf50;
+  --bg-primary:    #1a1a2e;
+  --bg-secondary:  #16213e;
+  --bg-card:       #0f3460;
+  --accent:        #e94560;
+  --accent-hover:  #c73652;
+  --danger:        #c0392b;
+  --danger-hover:  #a93226;
+  --text-primary:  #eaeaea;
+  --text-secondary:#a8a8b3;
+  --border:        #1e2a45;
+  --border-focus:  #e94560;
+  --success:       #4caf50;
+  --radius:        8px;
+  --transition:    0.2s ease;
 }
 
+/* ── Base ───────────────────────────────────────────────── */
+
 body {
-  font-family: 'Segoe UI', sans-serif;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background: var(--bg-primary);
   color: var(--text-primary);
   height: 100vh;
@@ -36,22 +46,65 @@ body {
   display: flex;
   flex-direction: column;
   height: 100vh;
+  transition: visibility var(--transition), opacity var(--transition);
 }
+
+/* ── Screen-Share Protection ───────────────────────────── */
+
+/*
+ * When screen sharing is detected (class toggled by JS),
+ * the entire app is hidden and a black overlay is shown.
+ * Zoom and similar tools capture the composited screen —
+ * visibility:hidden + opacity:0 prevents the content
+ * from appearing in the capture.
+ */
+.screen-share-active #app {
+  visibility: hidden;
+  opacity: 0;
+}
+
+.screen-share-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: #000;
+  z-index: 9999;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 12px;
+  color: #fff;
+  font-size: 1.4rem;
+  text-align: center;
+}
+
+.screen-share-overlay small {
+  font-size: 0.9rem;
+  color: #aaa;
+}
+
+.screen-share-active .screen-share-overlay {
+  display: flex;
+}
+
+/* ── Header ─────────────────────────────────────────────── */
 
 header {
   background: var(--bg-secondary);
-  padding: 16px 24px;
+  padding: 14px 24px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   border-bottom: 1px solid var(--border);
-  box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.35);
+  flex-shrink: 0;
 }
 
 header h1 {
-  font-size: 1.4rem;
+  font-size: 1.35rem;
   color: var(--accent);
   letter-spacing: 1px;
+  user-select: none;
 }
 
 .toolbar {
@@ -60,19 +113,22 @@ header h1 {
   align-items: center;
 }
 
+/* ── Form Controls ─────────────────────────────────────── */
+
 #searchInput {
   background: var(--bg-card);
   border: 1px solid var(--border);
   color: var(--text-primary);
   padding: 8px 14px;
-  border-radius: 8px;
+  border-radius: var(--radius);
   width: 220px;
   font-size: 0.9rem;
   outline: none;
-  transition: border 0.2s;
+  transition: border-color var(--transition);
 }
 
 #searchInput:focus {
+<<<<<<< HEAD
   border-color: var(--accent);
 }
 
@@ -90,6 +146,9 @@ button {
 
 button:hover {
   opacity: 0.85;
+=======
+  border-color: var(--border-focus);
+>>>>>>> 45542bf (Errors brought up  in the previous push are solved here)
 }
 
 select {
@@ -97,10 +156,49 @@ select {
   color: var(--text-primary);
   border: 1px solid var(--border);
   padding: 8px 10px;
-  border-radius: 8px;
+  border-radius: var(--radius);
   font-size: 0.9rem;
   cursor: pointer;
+  outline: none;
+  transition: border-color var(--transition);
 }
+
+select:focus {
+  border-color: var(--border-focus);
+}
+
+/* ── Buttons ─────────────────────────────────────────────── */
+
+button {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-family: inherit;
+  transition: background var(--transition);
+}
+
+button:hover {
+  background: var(--accent-hover);
+}
+
+button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.btn-danger {
+  background: var(--danger);
+}
+
+.btn-danger:hover {
+  background: var(--danger-hover);
+}
+
+/* ── Layout ─────────────────────────────────────────────── */
 
 main {
   display: flex;
@@ -108,9 +206,11 @@ main {
   overflow: hidden;
 }
 
-/* Notes Sidebar */
+/* ── Notes Sidebar ─────────────────────────────────────── */
+
 #notesList {
   width: 280px;
+  min-width: 220px;
   background: var(--bg-secondary);
   border-right: 1px solid var(--border);
   overflow-y: auto;
@@ -118,6 +218,7 @@ main {
   display: flex;
   flex-direction: column;
   gap: 8px;
+  flex-shrink: 0;
 }
 
 .note-card {
@@ -126,13 +227,18 @@ main {
   border-radius: 10px;
   padding: 14px;
   cursor: pointer;
-  transition: all 0.2s;
-  position: relative;
+  transition: border-color var(--transition), transform var(--transition),
+              background var(--transition);
 }
 
 .note-card:hover {
   border-color: var(--accent);
   transform: translateX(3px);
+}
+
+.note-card:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 
 .note-card.active {
@@ -162,13 +268,23 @@ main {
   margin-top: 6px;
 }
 
-/* Editor */
+.empty-state {
+  text-align: center;
+  color: var(--text-secondary);
+  padding: 40px 16px;
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+/* ── Editor Panel ───────────────────────────────────────── */
+
 #editorPanel {
   flex: 1;
   display: flex;
   flex-direction: column;
   padding: 24px;
   overflow: hidden;
+  min-width: 0;
 }
 
 #editorPlaceholder {
@@ -187,7 +303,8 @@ main {
   gap: 16px;
 }
 
-#editor.hidden {
+#editor.hidden,
+#editorPlaceholder.hidden {
   display: none;
 }
 
@@ -197,17 +314,16 @@ main {
   border-bottom: 2px solid var(--border);
   color: var(--text-primary);
   font-size: 1.6rem;
-  font-weight: bold;
+  font-weight: 700;
+  font-family: inherit;
   padding: 8px 0;
-  outline: none;
-  transition: border-color 0.2s;
-  /* BUG: Duplicate property */
   width: 100%;
-  width: 90%;
+  outline: none;
+  transition: border-color var(--transition);
 }
 
 #noteTitle:focus {
-  border-color: var(--accent);
+  border-color: var(--border-focus);
 }
 
 #noteContent {
@@ -218,21 +334,29 @@ main {
   padding: 16px;
   overflow-y: auto;
   font-size: 1rem;
-  line-height: 1.7;
+  line-height: 1.8;
   color: var(--text-primary);
   outline: none;
   white-space: pre-wrap;
+  word-break: break-word;
+  transition: border-color var(--transition);
 }
 
 #noteContent:focus {
-  border-color: var(--accent);
+  border-color: var(--border-focus);
+}
+
+#noteContent:empty::before {
+  content: attr(data-placeholder);
+  color: var(--text-secondary);
+  pointer-events: none;
 }
 
 .editor-footer {
   display: flex;
   align-items: center;
-  justify-content: flex-end;
   gap: 12px;
+  flex-shrink: 0;
 }
 
 #lastSaved {
@@ -241,44 +365,42 @@ main {
   margin-right: auto;
 }
 
-#deleteNoteBtn {
-  background: #c0392b;
+.unsaved {
+  font-size: 0.8rem;
+  color: var(--accent);
 }
 
-/* HIDE APP WHEN SCREEN SHARING */
-/* This class is toggled by JavaScript when screen share is detected */
-.screen-share-active #app {
-  visibility: hidden !important;
-  opacity: 0 !important;
-}
-
-.screen-share-overlay {
+.unsaved.hidden {
   display: none;
-  position: fixed;
-  inset: 0;
-  background: #000;
-  z-index: 9999;
-  align-items: center;
-  justify-content: center;
-  color: #fff;
-  font-size: 1.5rem;
-  flex-direction: column;
-  gap: 16px;
 }
 
-.screen-share-active .screen-share-overlay {
-  display: flex;
-}
+/* ── Scrollbar ──────────────────────────────────────────── */
 
-/* Scrollbar */
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: var(--bg-primary); }
-::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar          { width: 6px; }
+::-webkit-scrollbar-track    { background: var(--bg-primary); }
+::-webkit-scrollbar-thumb    { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--accent); }
 
-/* Empty state */
-.empty-state {
-  text-align: center;
-  color: var(--text-secondary);
-  padding: 40px 20px;
-  font-size: 0.9rem;
+/* ── Responsive ─────────────────────────────────────────── */
+
+@media (max-width: 600px) {
+  header {
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-start;
+  }
+
+  .toolbar {
+    flex-wrap: wrap;
+    width: 100%;
+  }
+
+  #searchInput {
+    width: 100%;
+  }
+
+  #notesList {
+    width: 200px;
+    min-width: 160px;
+  }
 }
