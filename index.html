@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Secret Notes</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="app">
+    <header>
+      <h1>🔒 Secret Notes</h1>
+      <div class="toolbar">
+        <input type="text" id="searchInput" placeholder="Search notes.." />
+        <!-- BUG: Missing closing tag for button below -->
+        <button id="newNoteBtn">+ New Note</button>
+        <select id="sortSelect">
+          <option value="date">Sort by Date</option>
+          <option value="title">Sort by Title</option>
+        </select>
+      </div>
+    </header>
+
+    <main>
+      <aside id="notesList"></aside>
+      <section id="editorPanel">
+        <div id="editorPlaceholder">
+          <p>Select a note or create a new one</p>
+        </div>
+        <div id="editor" class="hidden">
+          <input type="text" id="noteTitle" placeholder="Note title..." />
+          <!-- SECURITY ISSUE: No sanitization, directly injecting HTML -->
+          <div id="noteContent" contenteditable="true"></div>
+          <div class="editor-footer">
+            <span id="lastSaved"></span>
+            <!-- BUG: Wrong event attribute typo -->
+            <button id="deleteNoteBtn" onclik="deleteCurrentNote()">🗑 Delete</button>
+            <button id="saveNoteBtn">💾 Save</button>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
