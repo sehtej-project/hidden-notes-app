@@ -3,39 +3,77 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; style-src 'self'; script-src 'self';" />
   <title>Secret Notes</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
+
+  <!-- Overlay shown during screen sharing -->
+  <div class="screen-share-overlay" id="screenShareOverlay" role="alert" aria-live="assertive">
+    <span>🔒</span>
+    <p>Notes hidden during screen share</p>
+    <small>Your content is protected</small>
+  </div>
+
   <div id="app">
     <header>
       <h1>🔒 Secret Notes</h1>
       <div class="toolbar">
+<<<<<<< HEAD
         <input type="text" id="searchInput" placeholder="Search notes.." />
         <!-- BUG: Missing closing tag for button below -->
         <button id="newNoteBtn">+ New Note</button>
         <select id="sortSelect">
+=======
+        <input
+          type="text"
+          id="searchInput"
+          placeholder="Search notes..."
+          aria-label="Search notes"
+          autocomplete="off"
+        />
+        <select id="sortSelect" aria-label="Sort notes">
+>>>>>>> 45542bf (Errors brought up  in the previous push are solved here)
           <option value="date">Sort by Date</option>
           <option value="title">Sort by Title</option>
         </select>
+        <button id="newNoteBtn" aria-label="Create new note">+ New Note</button>
       </div>
     </header>
 
     <main>
-      <aside id="notesList"></aside>
-      <section id="editorPanel">
+      <aside id="notesList" aria-label="Notes list"></aside>
+
+      <section id="editorPanel" aria-label="Note editor">
         <div id="editorPlaceholder">
-          <p>Select a note or create a new one</p>
+          <p>📝 Select a note or create a new one</p>
         </div>
-        <div id="editor" class="hidden">
-          <input type="text" id="noteTitle" placeholder="Note title..." />
-          <!-- SECURITY ISSUE: No sanitization, directly injecting HTML -->
-          <div id="noteContent" contenteditable="true"></div>
+
+        <div id="editor" class="hidden" role="form" aria-label="Edit note">
+          <input
+            type="text"
+            id="noteTitle"
+            placeholder="Note title..."
+            aria-label="Note title"
+            maxlength="200"
+          />
+          <div
+            id="noteContent"
+            contenteditable="true"
+            role="textbox"
+            aria-multiline="true"
+            aria-label="Note content"
+            spellcheck="true"
+          ></div>
           <div class="editor-footer">
-            <span id="lastSaved"></span>
-            <!-- BUG: Wrong event attribute typo -->
-            <button id="deleteNoteBtn" onclik="deleteCurrentNote()">🗑 Delete</button>
-            <button id="saveNoteBtn">💾 Save</button>
+            <span id="lastSaved" aria-live="polite"></span>
+            <span id="unsavedIndicator" class="unsaved hidden">● Unsaved</span>
+            <button id="deleteNoteBtn" class="btn-danger" aria-label="Delete note">
+              🗑 Delete
+            </button>
+            <button id="saveNoteBtn" aria-label="Save note">💾 Save</button>
           </div>
         </div>
       </section>
