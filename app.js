@@ -11,7 +11,6 @@
 
 'use strict';
 
-// ── Constants ────────────────────────────────────────────────
 
 const STORAGE_KEY   = 'secret_notes_v1';
 const AUTOSAVE_MS   = 5000;   // Auto-save interval
