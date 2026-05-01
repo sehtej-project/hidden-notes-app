@@ -30,7 +30,6 @@ let isDirty = false;
 /** @type {number|null} */
 let autoSaveTimer = null;
 
-// ── Types (JSDoc) ────────────────────────────────────────────
 
 /**
  * @typedef {Object} Note
