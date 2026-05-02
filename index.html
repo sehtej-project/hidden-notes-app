@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <meta http-equiv="Content-Security-Policy"
         content="default-src 'self'; style-src 'self'; script-src 'self';" />
-  title>Secret Notes</title>
+  <title>Secret Notes</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
@@ -19,13 +19,8 @@
 
   <div id="app">
     <header>
-      <h1>bar">
-<<<<<<< HEAD
-        <input type="text" id="searchInput" placeholder="Search notes.." />
-        <!-- BUG: Missing closing tag for button below -->
-        <button id="newNoteBtn">+ New Note</button>
-        <select id="sortSelect">
-=======
+      <h1>Secret Notes</h1>
+      <div class="header-controls">
         <input
           type="text"
           id="searchInput"
@@ -33,7 +28,12 @@
           aria-label="Search notes"
           autocomplete="off"
         />
-        <select id="
+        <button id="newNoteBtn">+ New Note</button>
+        <select id="sortSelect">
+          <option value="updated">Last Updated</option>
+          <option value="title">Title A-Z</option>
+        </select>
+      </div>
     </header>
 
     <main>
