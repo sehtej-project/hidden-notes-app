@@ -88,10 +88,7 @@ function disablePresenterMode() {
     navigator.mediaDevices
   );
 
-  /**
-   * Patched getDisplayMedia — hides the app for the lifetime
-   * of the screen-capture stream.
-   */
+  
   navigator.mediaDevices.getDisplayMedia = async function (constraints) {
     setScreenShareActive(true);
 
