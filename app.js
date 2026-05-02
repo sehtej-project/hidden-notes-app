@@ -9,7 +9,7 @@
 //   • Accessible keyboard interactions
 // ============================================================
 
-'use strict';
+'use strict'
 
 
 const STORAGE_KEY   = 'secret_notes_v1';
@@ -25,7 +25,7 @@ let notes = [];
 let currentNoteId = null;
 
 /** @type {boolean} */
-let isDirty = false;
+let isDirty = false
 
 /** @type {number|null} */
 let autoSaveTimer = null;
@@ -34,7 +34,7 @@ let autoSaveTimer = null;
 
 /**
  * @typedef {Object} Note
- * @property {string} id
+ * @property {string id
  * @property {string} title
  * @property {string} content  — plain text, never raw HTML
  * @property {string} createdAt — ISO string
